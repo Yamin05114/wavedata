@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 /*
+    长度为6的列向量(其实就是一个box)拼出来的矩阵, 是box的数目,
     Calculates sum of values given a set of 'N' coordinates stored in 'boxes'
     and a 3D integral image 'img'. 'W', 'H', and 'L' are the dimensions of the
     integral image. The coordinates should be stored in 'boxes' as N column
@@ -24,19 +25,23 @@ extern "C" void integralImage3DVal(const uint32_t* boxes, const uint32_t N,
                                     float* vals)
 {
     uint32_t x1, y1, z1, x2, y2, z2, dx, dy, dz;
-    const float* const max_ptr = img + L*W*H - 1;
+    const float* const max_ptr = img + L*W*H - 1;  // img的末尾
 
-    for (uint32_t i = 0; i < N; ++i)
+    for (uint32_t i = 0; i < N; ++i)  //对于每一个box
     {
-        const uint32_t* box = boxes + i*6;
-        x1 = *box - 1;
-        y1 = *(box + 1) - 1;
+        const uint32_t* box = boxes + i*6; // 指针位置正好跳六下，是下一个box
+        x1 = *box - 1;            // x1 y1 z1各减一
+        y1 = *(box + 1) - 1;      // x2 y2 z2保持不变
         z1 = *(box + 2) - 1;
         x2 = *(box + 3);
         y2 = *(box + 4);
         z2 = *(box + 5);
 
-        const float* im1 = img + x1 + y1*W + z1*W*H;
+        const float* im1 = img + x1 + y1*W + z1*W*H;  
+        // 这里的意思就是先增长x，在增长y，最后增长z。
+        // 这个做法跟我们平时的做法是不一样的，我们在tensorflow中肯定是先增长c channel，
+        // 在增长y column位置，最后增长x row位置!!!
+        
         const float* im2 = img + x2 + y2*W + z2*W*H;
 
         // error checking to prevent accessing invalid memory
