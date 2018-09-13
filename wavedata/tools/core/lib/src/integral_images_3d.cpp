@@ -3,7 +3,9 @@
 #include <stdint.h>
 
 /*
-    长度为6的列向量(其实就是一个box)拼出来的矩阵, 是box的数目,
+    长度为6的列向量(其实就是一个box)拼出来的矩阵, N是box的数目
+    卷积图（x，y，z）对应的数值，其实就是0->x 0->y 0->z
+    那三个线段拼起来的封闭长方体里面的每一个像素之和
     Calculates sum of values given a set of 'N' coordinates stored in 'boxes'
     and a 3D integral image 'img'. 'W', 'H', and 'L' are the dimensions of the
     integral image. The coordinates should be stored in 'boxes' as N column
